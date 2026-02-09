@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tipos de Ataques DDoS</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Roboto', sans-serif; 
+        }
+
+        body {
+            background: linear-gradient(135deg, #060b41, #03fae5);
+            color: #333;
+            padding: 30px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 2.8rem;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .subtitle {
+            color: #d1d8e0;
+            text-align: center;
+            margin-bottom: 50px;
+            font-size: 1.2rem;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.6;
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+            margin-bottom: 60px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow: hidden;
+            border-top: 6px solid;
+        }
+
+        .card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .card h3 {
+            font-size: 1.6rem;
+            margin-bottom: 15px;
+            color: #000000;
+        }
+
+        .card p {
+            color: #444;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            flex-grow: 1;
+            font-size: 1rem;
+        }
+
+        .criticidade {
+            display: inline-block;
+            padding: 8px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .critica {
+            background-color: #b70c0c;
+            color: white;
+        }
+
+        .alta {
+            background-color: #ff540d;
+            color: white;
+        }
+
+        .media {
+            background-color: #ffc400;
+            color: white;
+        }
+
+        .baixa {
+            background-color: #8fe33d;
+            color: white;
+        }
+
+        /* Cores específicas para cada tipo de ataque */
+        .amplificacao { border-top-color: #FF6B6B; }
+        .volumetrico { border-top-color: #4ECDC4; }
+        .protocolo { border-top-color: #FFD166; }
+        .aplicacao { border-top-color: #06D6A0; }
+        .recursos { border-top-color: #118AB2; }
+        .camada2 { border-top-color: #9D4EDD; }
+        .multivetor { border-top-color: #FF9933; }
+
+        /* MODAL */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.9);
+            overflow-y: auto;
+        }
+
+        .modal-content {
+            background-color: #ffffff;
+            margin: 30px auto;
+            padding: 40px;
+            width: 95%;
+            max-width: 1500px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            position: relative;
+            animation: modalOpen 0.4s ease;
+        }
+
+        @keyframes modalOpen {
+            from { transform: translateY(-50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .close {
+            position: absolute;
+            top: 20px;
+            right: 25px;
+            font-size: 2.5rem;
+            color: #666;
+            cursor: pointer;
+            transition: 0.3s;
+            z-index: 1001;
+            background: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            font-weight: bold;
+        }
+
+        .close:hover {
+            color: #000;
+            transform: rotate(90deg);
+        }
+
+        .modal-header {
+            border-bottom: 4px solid;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h2 {
+            color: #2c3e50;
+            font-size: 2.2rem;
+            margin: 0;
+        }
+
+        .modal-section {
+            margin-bottom: 35px;
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            border-left: 5px solid #4b7bec;
+        }
+
+        .modal-section h3 {
+            color: #000000;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e0e0e0;
+            font-size: 1.4rem;
+        }
+
+        .modal-section h4 {
+            color: #444;
+            margin: 15px 0 10px 0;
+            font-size: 1.1rem;
+        }
+
+        .image-container {
+            text-align: center;
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            border: 2px dashed #dee2e6;
+            margin: 20px 0;
+            transition: all 0.3s ease;
+        }
+
+        .image-container:hover {
+            border-color: #4b7bec;
+            box-shadow: 0 8px 20px rgba(75, 123, 236, 0.1);
+        }
+
+        .image-container img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+            border: 1px solid #ddd;
+            transition: transform 0.3s ease;
+        }
+
+        .image-container img:hover {
+            transform: scale(1.01);
+        }
+
+        .download-link {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 25px;
+            background: #060b41;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .download-link:hover {
+            background: #218838;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(0,0,0,0.25);
+        }
+
+        ul {
+            padding-left: 30px;
+            line-height: 1.8;
+        }
+
+        li {
+            margin-bottom: 12px;
+            color: #444;
+        }
+
+        .ferramentas-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 15px;
+        }
+
+        .ferramenta {
+            background: #060b41;
+            color: white;
+            padding: 10px 18px;
+            border-radius: 25px;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        footer {
+            text-align: center;
+            color: #001124;
+            margin-top: 60px;
+            font-size: 0,5rem;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .modal-controls {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+
+        .nav-btn {
+            background: #060b41;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+            transition: 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-btn:hover {
+            background: #3867d6;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .counter {
+            position: right;
+            top: 20px;
+            left: 20px;
+            background: #101D61;
+            color: white;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .color-badge {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            display: inline-block;
+            margin-right: 10px;
+            vertical-align: middle;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        @media (max-width: 1200px) {
+            .cards-grid {
+                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+                gap: 25px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .cards-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .modal-content {
+                padding: 25px 20px;
+                margin: 15px auto;
+            }
+            
+            .modal-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+            
+            .modal-controls {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .nav-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 15px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .card {
+                padding: 20px;
+            }
+            
+            .modal-content {
+                padding: 20px 15px;
+            }
+            
+            .ferramentas-list {
+                justify-content: center;
+            }
+        }
+
+        .icon {
+            font-size: 2rem;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>TIPOS DE ATAQUES DoS/DDoS</h1>
+        <p class="subtitle">Um guia completo de resposta a incidentes de Negação de Serviço Distribuído. Guia de como evitar diferentes tipos de ataques DoS/DDoS com estratégias de mitigação específicas.</p>
+
+        <div class="cards-grid">
+            <!-- Card 1: Ataques de Amplificação/Reflexão -->
+            <div class="card amplificacao" onclick="openModal('modal-amplificacao')">
+                <div class="counter">1</div>
+                <h3>Amplificação/Reflexão</h3>
+                <p>Usam servidores legítimos da internet para multiplicar o ataque. Um pequeno pedido gera uma resposta gigante contra a vítima. Alto impacto com baixo esforço.</p>
+                <div class="criticidade critica">Criticidade: Crítica</div>
+            </div>
+
+            <!-- Card 2: Ataques Volumétricos Diretos -->
+            <div class="card volumetrico" onclick="openModal('modal-volumetrico')">
+                <div class="counter">2</div>
+                <h3>Volumétricos Diretos</h3>
+                <p>O único objetivo é enviar o máximo de lixo digital possível até que a conexão de internet da vítima fique totalmente entupida. Ataque de força bruta que satura a banda disponível. Simples mas efetivo.</p>
+                <div class="criticidade alta">Criticidade: Alta</div>
+            </div>
+
+            <!-- Card 3: Exploração de Protocolos/Estado -->
+            <div class="card protocolo" onclick="openModal('modal-protocolo')">
+                <div class="counter">3</div>
+                <h3>Exploração de Protocolos</h3>
+                <p>Aproveitam falhas nas regras básicas de comunicação. Travam servidores explorando handshakes incompletos e tabelas de estado.</p>
+                <div class="criticidade media">Criticidade: Média</div>
+            </div>
+
+            <!-- Card 4: Ataques em Camada de Aplicação -->
+            <div class="card aplicacao" onclick="openModal('modal-aplicacao')">
+                <div class="counter">4</div>
+                <h3>Camada de Aplicação</h3>
+                <p>Atacam diretamente sites/sistemas, fingindo ser acessos legítimos. Baixo volume mas alto impacto no processamento.</p>
+                <div class="criticidade critica">Criticidade: Crítica</div>
+            </div>
+
+            <!-- Card 5: Ataques de Exaustão de Recursos -->
+            <div class="card recursos" onclick="openModal('modal-recursos')">
+                <div class="counter">5</div>
+                <h3>Exaustão de Recursos</h3>
+                <p>Mira em partes específicas e "caras" do sistema: banco de dados, SSL, APIs. Consomem CPU e memória de forma seletiva.</p>
+                <div class="criticidade alta">Criticidade: Alta</div>
+            </div>
+
+            <!-- Card 6: Ataques de Camada 2 -->
+            <div class="card camada2" onclick="openModal('modal-camada2')">
+                <div class="counter">6</div>
+                <h3>Camada 2 (Data Link)</h3>
+                <p>Acontecem dentro da rede local. Atacam switches, roteadores e protocolos internos. Isolado mas devastador internamente.</p>
+                <div class="criticidade media">Criticidade: Média</div>
+            </div>
+
+            <!-- Card 7: Ataques Multi-Vetoriais -->
+            <div class="card multivetor" onclick="openModal('modal-multivetor')">
+                <div class="counter">7</div>
+                <h3>Multi-Vetoriais</h3>
+                <p>Combinação de várias técnicas simultaneamente. Evolutivo e adaptativo. O mais difícil de mitigar atualmente.</p>
+                <div class="criticidade critica">Criticidade: Crítica</div>
+            </div>
+        </div>
+
+        <!-- ================= MODAIS ================= -->
+
+        <!-- Modal 1: Amplificação/Reflexão -->
+        <div id="modal-amplificacao" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal('modal-amplificacao')">&times;</span>
+                <div class="modal-header" style="border-bottom-color: #FF6B6B;">
+                    <h2><span class="color-badge" style="background: #FF6B6B;"></span>Amplificação/Reflexão</h2>
+                    <div class="criticidade critica">Criticidade: Crítica</div>
+                </div>
+
+                <div class="modal-section">
+                    <h3>Comprometimento</h3>
+                    <p>O atacante utiliza servidores vulneráveis (como DNS ou NTP) para enviar respostas volumosas ao endereço IP da UFRGS, congestionando o link de internet e tirando do ar portais como o Portal do Aluno ou o SEI.</p>
+                    
+                    <h4>Como Funciona:</h4>
+                    <ul>
+                        <li><strong>DNS Amplification</strong>: Amplificação 28-54x usando queries "ANY"</li>
+                        <li><strong>NTP Amplification</strong>: Comando monlist (até 556x de amplificação)</li>
+                        <li><strong>Memcached</strong>: Até 51.000x - o mais potente já registrado</li>
+                        <li><strong>SSDP/SNMP/CLDAP</strong>: Outros protocolos vulneráveis</li>
+                    </ul>
+                </div>
+
+                <div class="modal-section">
+                    <h3>Como Evitar</h3>
+                    <ul>
+                        <li>Implementar filtragem de tráfego de entrada</li>
+                        <li>Garantir que os servidores internos não permitam consultas recursivas abertas para fontes externas</li>
+                        <li>Implementar BCP38/Ingress Filtering na borda da rede</li>
+                        <li>Rate limiting para protocolos vulneráveis (DNS, NTP)</li>
+                        <li>Configurar servidores para não responder a queries externas</li>
+                    </ul>
+                </div>
+
+                <div class="modal-section">
+                    <h3>Como Mitigar</h3>
+                    <ul>
+                        <li>Utilizar serviços de limpeza de tráfego (scrubbing centers)</li>
+                        <li>Utilizar redes Anycast para dispersar e absorver o volume excessivo</li>
+                        <li>Utilizar serviços de scrubbing DDoS especializados</li>
+                        <li>Monitorar tráfego assimétrico (muito inbound, pouco outbound)</li>
+                        <li>Verificar se servidores internos não estão sendo usados como amplificadores</li>
+                    </ul>
+                </div>
+
+                <div class="image-container">
+                    <!-- IMAGEM A SER ADICIONADA -->
+                    <img src="amplificacao.jpg" alt="Infográfico de Ataque de Amplificação">
+                </div>
+
+                <div class="modal-controls">
+                    <button class="nav-btn" onclick="openModal('modal-multivetor'); closeModal('modal-amplificacao')">← Anterior</button>
+                    <button class="nav-btn" onclick="openModal('modal-volumetrico'); closeModal('modal-amplificacao')">Próximo →</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal 2: Volumétricos Diretos -->
+        <div id="modal-volumetrico" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal('modal-volumetrico')">&times;</span>
+                <div class="modal-header" style="border-bottom-color: #4ECDC4;">
+                    <h2><span class="color-badge" style="background: #4ECDC4;"></span>Volumétricos Diretos</h2>
+                    <div class="criticidade alta">Criticidade: Alta</div>
+                </div>
+
+                <div class="modal-section">
+                    <h3>Comprometimento</h3>
+                    <p>Inundações massivas de pacotes (UDP ou ICMP) que visam saturar completamente a largura de banda da rede da universidade, isolando-a da internet.</p>
+                    
+                    <h4>Tipos Principais:</h4>
+                    <ul>
+                        <li><strong>UDP Flood</strong>: Pacotes UDP para portas aleatórias</li>
+                        <li><strong>ICMP Flood (Ping Flood)</strong>: Respostas massivas de ping</li>
+                        <li><strong>GRE/ESP Flood</strong>: Protocolos de tunelamento menos monitorados</li>
+                        <li><strong>Ataques de Requisição-Resposta</strong>: Muitas requisições legítimas simultâneas</li>
+                    </ul>
+                </div>
+
+                <div class="modal-section">
+                    <h3>Como Evitar</h3>
+                    <ul>
+                        <li>Manter largura de banda sobressalente</li>
+                        <li>Utilizar soluções de proteção DDoS baseadas em nuvem que aguentem ataques na escala de Terabits</li>
+                        <li>Contratar capacidade de banda superior ao ataque esperado</li>
+                        <li>Utilizar Anycast DNS para distribuir o tráfego</li>
+                        <li>Implementar CDN para conteúdo estático</li>
+                    </ul>
+                </div>
+
+                <div class="modal-section">
+                    <h3>Como Mitigar</h3>
+                    <ul>
+                        <li>Bloquear tráfego de origens conhecidas por botnets</li>
+                        <li>Aplicar regras de descarte (drop) em roteadores de borda para protocolos não essenciais</li>
+                        <li>Acionar provedor de scrubbing DDoS</li>
+                        <li>Configurar rate limiting agressivo na borda</li>
+                        <li>Blackhole routing para tráfego malicioso identificado</li>
+                    </ul>
+                </div>
+
+                <div class="image-container">
+                    <!-- IMAGEM A SER ADICIONADA -->
+                    <img src="volumetrico.jpg" alt="Infográfico de Ataque Volumétrico">
+                </div>
+
+                <div class="modal-controls">
+                    <button class="nav-btn" onclick="openModal('modal-amplificacao'); closeModal('modal-volumetrico')">← Anterior</button>
+                    <button class="nav-btn" onclick="openModal('modal-protocolo'); closeModal('modal-volumetrico')">Próximo →</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal 3: Exploração de Protocolos/Estado -->
+        <div id="modal-protocolo" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal('modal-protocolo')">&times;</span>
+                <div class="modal-header" style="border-bottom-color: #FFD166;">
+                    <h2><span class="color-badge" style="background: #FFD166;"></span>Exploração de Protocolos/Estado</h2>
+                    <div class="criticidade media">Criticidade: Média</div>
+                </div>
+
+                <div class="modal-section">
+                    <h3>Comprometimento</h3>
+                    <p>Exploram fragilidades em protocolos de rede (como o TCP SYN Flood), consumindo as tabelas de estado de firewalls e balanceadores de carga da UFRGS, impedindo novas conexões legítimas.</p>
+                    
+                    <h4>Técnicas Comuns:</h4>
+                    <ul>
+                        <li><strong>SYN Flood</strong>: Envia pacotes SYN sem completar o handshake</li>
+                        <li><strong>ACK/PUSH ACK Flood</strong>: Variações do ataque TCP state-exhaustion</li>
+                        <li><strong>TCP Connection Exhaustion</strong>: Estabelece muitas conexões legítimas</li>
+                        <li><strong>IP/ICMP Fragmentation</strong>: Pacotes fragmentados para sobrecarregar reassembly</li>
+                    </ul>
+                </div>
+
+                <div class="modal-section">
+                    <h3>Como Evitar</h3>
+                    <ul>
+                        <li>Configurar adequadamente o endurecimento (hardening) de dispositivos de borda e firewalls para gerenciar melhor as filas de conexão</li>
+                        <li>Habilitar SYN cookies nos servidores e firewalls</li>
+                        <li>Ajustar timeouts TCP para valores mais curtos</li>
+                        <li>Implementar State Table Protection</li>
+                        <li>Configurar firewalls stateful com inspeção profunda</li>
+                    </ul>
+                </div>
+
+                <div class="modal-section">
+                    <h3>Como Mitigar</h3>
+                    <ul>
+                        <li>Implementar tecnologias como SYN cookies</li>
+                        <li>Reduzir tempos de timeout para conexões pendentes</li>
+                        <li>Limitar número máximo de conexões por IP</li>
+                        <li>Usar IPS/IDS configurados adequadamente</li>
+                    </ul>
+                </div>
+
+                <div class="image-container">
+                    <!-- IMAGEM A SER ADICIONADA -->
+                    <img src="protocolo.jpg" alt="Infográfico de Ataque de Protocolo">
+                </div>
+
+                <div class="modal-controls">
+                    <button class="nav-btn" onclick="openModal('modal-volumetrico'); closeModal('modal-protocolo')">← Anterior</button>
+                    <button class="nav-btn" onclick="openModal('modal-aplicacao'); closeModal('modal-protocolo')">Próximo →</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal 4: Ataques em Camada de Aplicação -->
+        <div id="modal-aplicacao" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal('modal-aplicacao')">&times;</span>
+                <div class="modal-header" style="border-bottom-color: #06D6A0;">
+                    <h2><span class="color-badge" style="background: #06D6A0;"></span>Camada de Aplicação (Layer 7)</h2>
+                    <div class="criticidade critica">Criticidade: Crítica</div>
+                </div>
+
+                <div class="modal-section">
+                    <h3>Comprometimento</h3>
+                    <p>Visam aplicações específicas (HTTP/HTTPS), simulando tráfego legítimo para exaurir recursos do servidor web. Isso pode paralisar o Moodle durante períodos de alta demanda, como semanas de provas.</p>
+                    
+                    <h4>Técnicas Avançadas:</h4>
+                    <ul>
+                        <li><strong>HTTP/HTTPS Flood</strong>: Requisições massivas para páginas dinâmicas</li>
+                        <li><strong>Slowloris</strong>: Mantém conexões abertas com headers incompletos</li>
+                        <li><strong>RUDY (R-U-Dead-Yet)</strong>: Submissão lenta de formulários POST</li>
+                        <li><strong>Cache Bypass</strong>: Força requisições com parâmetros únicos para evitar cache</li>
+                    </ul>
+                </div>
+
+                <div class="modal-section">
+                    <h3>Como Evitar</h3>
+                    <ul>
+                        <li>Utilizar um WAF (Web Application Firewall) para filtrar solicitações suspeitas</li>
+                        <li>Validar se o tráfego é de usuários humanos ou bots</li>
+                        <li>Implementar WAF (Web Application Firewall)</li>
+                        <li>Rate limiting por IP, sessão e URL</li>
+                        <li>Utilizar CAPTCHAs e desafios para comportamento suspeito</li>
+                    </ul>
+                </div>
+
+                <div class="modal-section">
+                    <h3>Como Mitigar</h3>
+                    <ul>
+                        <li>Aplicar rate limiting (limite de requisições por IP)</li>
+                        <li>Usar inspeção comportamental para identificar anomalias em tempo real</li>
+                        <li>Análise comportamental de usuários</li>
+                        <li>Cache agressivo de conteúdo estático</li>
+                        <li>Implementar CDN com proteção DDoS</li>
+                    </ul>
+                </div>
+
+                <div class="image-container">
+                    <!-- IMAGEM A SER ADICIONADA -->
+                    <img src="aplicacao.jpg" alt="Infográfico de Ataque de Aplicação">
+                </div>
+
+                <div class="modal-controls">
+                    <button class="nav-btn" onclick="openModal('modal-protocolo'); closeModal('modal-aplicacao')">← Anterior</button>
+                    <button class="nav-btn" onclick="openModal('modal-recursos'); closeModal('modal-aplicacao')">Próximo →</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal 5: Exaustão de Recursos -->
+        <div id="modal-recursos" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal('modal-recursos')">&times;</span>
+                <div class="modal-header" style="border-bottom-color: #118AB2;">
+                    <h2><span class="color-badge" style="background: #118AB2;"></span>Exaustão de Recursos Específicos</h2>
+                    <div class="criticidade alta">Criticidade: Alta</div>
+                </div>
+
+                <div class="modal-section">
+                    <h3>Comprometimento</h3>
+                    <p>Focam em componentes específicos, como ciclos de CPU, memória ou bancos de dados de sistemas de pesquisa, tornando-os lentos ou inoperantes sem necessariamente inundar a rede.</p>
+                    
+                    <h4>Alvos Comuns:</h4>
+                    <ul>
+                        <li><strong>SSL/TLS Renegotiation</strong>: Força renegociação constante de handshakes</li>
+                        <li><strong>XML/SOAP Attacks</strong>: Documentos XML malformados ou profundamente aninhados</li>
+                        <li><strong>Connection Pool Exhaustion</strong>: Abre todas as conexões disponíveis no pool de banco</li>
+                        <li><strong>WordPress Pingback</strong>: Explora funcionalidade para criar loops</li>
+                    </ul>
+                </div>
+
+                <div class="modal-section">
+                    <h3>Como Evitar</h3>
+                    <ul>
+                        <li>Monitorar o uso de recursos em tempo real</li>
+                        <li>Isolar serviços críticos em máquinas virtuais ou containers distintos</li>
+                        <li>Rate limiting por recurso específico</li>
+                        <li>Otimizar queries e processos computacionalmente caros</li>
+                        <li>Implementar circuit breakers para recursos sobrecarregados</li>
+                    </ul>
+                </div>
+
+                <div class="modal-section">
+                    <h3>Como Mitigar</h3>
+                    <ul>
+                        <li>Escalar horizontalmente os servidores (balanceamento de carga)</li>
+                        <li>Realizar o reinício automático de serviços que atinjam limites críticos</li>
+                        <li>Escalonar recursos específicos sob ataque</li>
+                        <li>Limitar tamanho de uploads e complexidade de XML</li>
+                        <li>Monitorar métricas específicas de recursos (CPU por processo)</li>
+                    </ul>
+                </div>
+
+                <div class="image-container">
+                    <!-- IMAGEM A SER ADICIONADA -->
+                    <img src="exaustao.jpg" alt="Infográfico de Ataque de Exaustão">
+                </div>
+
+                <div class="modal-controls">
+                    <button class="nav-btn" onclick="openModal('modal-aplicacao'); closeModal('modal-recursos')">← Anterior</button>
+                    <button class="nav-btn" onclick="openModal('modal-camada2'); closeModal('modal-recursos')">Próximo →</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal 6: Camada 2 -->
+        <div id="modal-camada2" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal('modal-camada2')">&times;</span>
+                <div class="modal-header" style="border-bottom-color: #9D4EDD;">
+                    <h2><span class="color-badge" style="background: #9D4EDD;"></span>Camada 2 (Data Link)</h2>
+                    <div class="criticidade media">Criticidade: Média</div>
+                </div>
+
+                <div class="modal-section">
+                    <h3>Comprometimento</h3>
+                    <p>Ocorrem dentro da rede local (LAN) da UFRGS, como o envenenamento de ARP (ARP Spoofing), permitindo que um atacante intercepte dados acadêmicos ou administrativos sensíveis.</p>
+                    
+                    <h4>Técnicas de Camada 2:</h4>
+                    <ul>
+                        <li><strong>ARP Poisoning/Flooding</strong>: Envia respostas ARP falsas</li>
+                        <li><strong>MAC Flooding</strong>: Enche a CAM table do switch com MACs falsos</li>
+                        <li><strong>VLAN Hopping</strong>: Explora configurações incorretas de trunking</li>
+                        <li><strong>STP Attacks</strong>: Interfere no Spanning Tree Protocol</li>
+                    </ul>
+                </div>
+
+                <div class="modal-section">
+                    <h3>Como Evitar</h3>
+                    <ul>
+                        <li>Ativar recursos de segurança em switches, como Port Security</li>
+                        <li>Configurar Dynamic ARP Inspection</li>
+                        <li>Implementar DHCP Snooping</li>
+                        <li>Implementar Port Security em switches</li>
+                        <li>Configurar DHCP Snooping</li>
+                        <li>Usar Dynamic ARP Inspection (DAI)</li>
+                    </ul>
+                </div>
+
+                <div class="modal-section">
+                    <h3>Como Mitigar</h3>
+                    <ul>
+                        <li>Segmentar a rede em VLANs</li>
+                        <li>Utilizar autenticação baseada em certificados (802.1X) para controle de acesso</li>
+                        <li>Implementar 802.1X para autenticação de rede</li>
+                        <li>Configurar VLANs corretamente (não usar VLAN 1)</li>
+                        <li>Monitorar tráfego broadcast excessivo</li>
+                    </ul>
+                </div>
+
+                <div class="image-container">
+                    <!-- IMAGEM A SER ADICIONADA -->
+                    <img src="camada2.jpg" alt="Infográfico de Ataque de Camada 2">
+                </div>
+
+                <div class="modal-controls">
+                    <button class="nav-btn" onclick="openModal('modal-recursos'); closeModal('modal-camada2')">← Anterior</button>
+                    <button class="nav-btn" onclick="openModal('modal-multivetor'); closeModal('modal-camada2')">Próximo →</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal 7: Multi-Vetoriais -->
+        <div id="modal-multivetor" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal('modal-multivetor')">&times;</span>
+                <div class="modal-header" style="border-bottom-color: #FF9933;">
+                    <h2><span class="color-badge" style="background: #FF9933;"></span>Ataques Multi-Vetoriais</h2>
+                    <div class="criticidade critica">Criticidade: Crítica</div>
+                </div>
+
+                <div class="modal-section">
+                    <h3>Comprometimento</h3>
+                    <p>Combinam várias técnicas (ex: um ataque volumétrico para distrair a equipe enquanto um ataque de Camada 7 rouba dados), tornando a defesa extremamente complexa.</p>
+                    
+                    <h4>Estratégia Típica:</h4>
+                    <ul>
+                        <li><strong>Fase 1</strong>: Ataque volumétrico para forçar tráfego para scrubbing centers</li>
+                        <li><strong>Fase 2</strong>: Ataque de protocolo para sobrecarregar dispositivos de scrubbing</li>
+                        <li><strong>Fase 3</strong>: Tráfego Layer 7 que parece limpo após scrubbing</li>
+                        <li><strong>Fase 4</strong>: Ataque adaptativo baseado nas defesas detectadas</li>
+                    </ul>
+                </div>
+
+                <div class="modal-section">
+                    <h3>Como Evitar</h3>
+                    <ul>
+                        <li>Adotar uma estratégia de Defesa em Profundidade, com múltiplas camadas de proteção trabalhando de forma integrada</li>
+                        <li>Plano de resposta integrado para múltiplas equipes</li>
+                        <li>Combinação de soluções (WAF + Scrubbing + Análise Comportamental)</li>
+                        <li>Resposta adaptativa em tempo real com automação</li>
+                    </ul>
+                </div>
+
+                <div class="modal-section">
+                    <h3>Como Mitigar</h3>
+                    <ul>
+                        <li>Utilizar plataformas de orquestração de segurança (SIEM e SOAR) que automatizam a resposta a incidentes complexos em segundos</li>
+                        <li>Monitoramento holístico de todas as camadas</li>
+                        <li>Testes regulares de resposta a incidentes complexos</li>
+                        <li>Parceria com múltiplos provedores de mitigação</li>
+                    </ul>
+                </div>
+
+                <div class="image-container">
+                    <!-- IMAGEM A SER ADICIONADA -->
+                    <img src="multivetoriais.jpg" alt="Infográfico de Ataque Multi-Vetorial">
+                </div>
+
+                <div class="modal-controls">
+                    <button class="nav-btn" onclick="openModal('modal-camada2'); closeModal('modal-multivetor')">← Anterior</button>
+                    <button class="nav-btn" onclick="openModal('modal-amplificacao'); closeModal('modal-multivetor')">Próximo →</button>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>Playbook de Resposta a DDoS - Desenvolvido para Análise de Segurança | Última atualização: Janeiro 2026</p>
+            <p>Para uso interno, educativo e de referência em resposta a incidentes.</p>
+        </footer>
+    </div>
+
+    <script>
+        // Array com ordem dos modais
+        const modalOrder = [
+            'modal-amplificacao',
+            'modal-volumetrico',
+            'modal-protocolo',
+            'modal-aplicacao',
+            'modal-recursos',
+            'modal-camada2',
+            'modal-multivetor'
+        ];
+
+        // Funções para abrir/fechar modais
+        function openModal(modalId) {
+            document.getElementById(modalId).style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        // Fechar modal ao clicar fora
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+        }
+
+        // Fechar com ESC
+        document.onkeydown = function(evt) {
+            evt = evt || window.event;
+            if (evt.key === "Escape") {
+                const modals = document.querySelectorAll('.modal');
+                modals.forEach(modal => {
+                    modal.style.display = 'none';
+                });
+                document.body.style.overflow = 'auto';
+            }
+        };
+
+        // Navegação entre modais
+        document.addEventListener('DOMContentLoaded', function() {
+            // Adicionar navegação automática aos botões
+            document.querySelectorAll('.nav-btn').forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                });
+            });
+        });
+    </script>
+</body>
+</html>
